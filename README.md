@@ -13,7 +13,8 @@ More details about the implementation is given [here](graph.md)
 To extract and process the data is dependant on the following tools:
 
   - [python3](https://python.org) 
-  - [pandas](http://pandas.pydata.org/), [numpy](https://www.numpy.org/) and [networkx](https://networkx.github.io) python3 packages
+  - [pandas](http://pandas.pydata.org/) and [numpy](https://www.numpy.org/) python3 packages for simplification
+  - [matplotlib](https://matplotlib.org/) and [networkx](https://networkx.github.io) python3 packages for visualisation
   
 #### For ease of python dependency management a local python3 [miniconda](https://conda.io/miniconda.html) or [anaconda](https://www.anaconda.com/distribution/) installation is recomended
 
