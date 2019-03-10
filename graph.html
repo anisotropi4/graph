@@ -1,0 +1,345 @@
+<html>
+<head>
+<title>Transport Simplification through Network Disaggregation and Reassembly</title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="github-markdown.min.css">
+<style>
+	.markdown-body {
+		box-sizing: border-box;
+		min-width: 200px;
+		max-width: 980px;
+		margin: 0 auto;
+		padding: 45px;
+	}
+
+	@media (max-width: 767px) {
+		.markdown-body {
+			padding: 15px;
+		}
+	}
+</style>
+<article class="markdown-body">
+<h1>Transport Network Simplification through Network Disaggregation and Reassembly</h1>
+<h2>Overview</h2>
+<p>Geographic representations of networks, such as transport networks, typically consist of end-point, junctions and simply-connected nodes. Where a simply-connected node is a node which is only connected to two other nodes. In the following diagram B is a simply-connected node:</p>
+<table>
+<thead><tr>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="images/ExampleRA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/ExampleRB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<p>As this is a transport network the directed representation is then convered to a bi-directional graph.</p>
+<p>Geographic networks then typically consist of a large number of simply-connected nodes with a smaller number of end-point or simply-connected. For example, analysis of the OpenStreetMap (OSM) British rail-network shows 497 359 nodes with 506 337 edges but, once duplicate edges are removed, and bi-directional edges of the 1 012 604 segments 925 172 (91.4%) are simply-connected.</p>
+<p>A simplified junction and end-node network is then created by combining all simply-connected nodes using an edge colouring algorithm to a bi-directional copy of the base network.</p>
+<h2>Network disaggregation</h2>
+<p>The bi-directional network is created by disaggregating the based network into its component edges and adding missing edges</p>
+<h3>Initial network disaggregation and assembly</h3>
+<p>The creation of the inital segmented network is as follows:</p>
+<ol>
+<li>The base network is broken into its constituent edges. Each edge corresponds to a source-and-target pair in the base network</li>
+<li>Existing Bi-directional source-target/target-source edges are identified</li>
+<li>The network completed by adding missing bi-direction edges</li>
+<li>A unique logical colour allocated to each edge in this segmented network</li>
+</ol>
+<table>
+<thead><tr>
+<th style="text-align:center">Base network</th>
+<th style="text-align:center">Bi-directional network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="images/ExampleRA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/AggregateRA.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h3>Deduplication of parallel edges and counting nodes</h3>
+<p>As the edge count for a given node is used to identify simply-connected nodes, parallel edges (edges with identical source and target nodes) are output and duplicates edges combined, and the edge count for each node calculated</p>
+<h3>Identification of network links</h3>
+<p>Using the source and target edge, node and edge count for a give node the edges linking nodes are identified</p>
+<ol>
+<li>For each edges corresponding source and target node and edge counts are determined </li>
+<li>Source and target nodes are combined to identify inbound and outbound edges for a give node</li>
+<li>Links are pruned to remove:<ul>
+<li>Simple loops where the inbound-source and outbound-target nodes are the same</li>
+<li>Complex end points where the outbound target-node edge-count is three or more</li>
+</ul>
+</li>
+</ol>
+<h2>Network simplication</h2>
+<p>The the network is simplified by colouring of edges corresponding to simple-elements when reassembling the disaggregated network:</p>
+<h3>Colouring of edges</h3>
+<p>The network is segmented by giving the source edge-colour to all linked simply-connected edges:</p>
+<ol>
+<li>All active segments are identified, where the target-node edge-count is two and source-node edge-count is not two</li>
+<li>For every active-segment, identify the corresponding current source-node, source-edge and target-edge </li>
+<li>If this target-edge is simply-connected <ul>
+<li>Apply the source-edge colour to the target-edge  </li>
+<li>Make the current target-edge the source-edge</li>
+<li>Repeat stage 3 until the target-edge is not simply connected</li>
+</ul>
+</li>
+<li>Iterate through all active segments</li>
+</ol>
+<h3>Colouring of simple loops</h3>
+<p>A loop with three nodes simply-connected edges is problematic as all nodes in the loop are simply connected. This can prove problematic as is shown in ID W013 and W014 examples below</p>
+<table>
+<thead><tr>
+<th style="text-align:center">Simple-loop</th>
+<th style="text-align:center">Bi-directional loop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="images/SimpleLoopRA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/LoopRA.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<p>To address this, an arbitary edge is selected and the colour is applied to the two adjacent edges</p>
+<ol>
+<li>All active segments are identified, where the target-node and source-node edge-count is two and the edge has not previously been visited</li>
+<li>Apply the source-edge to the child target-edge and the grand-child target-edge</li>
+<li>Iterate through all active loops</li>
+</ol>
+<p>The result is then</p>
+<table>
+<thead><tr>
+<th style="text-align:center">Simple-loop</th>
+<th style="text-align:center">Simplified loop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="images/SimpleLoopRA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/LoopRB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h3>Reassembly of the simplified network</h3>
+<p>The simplified network is reassembled by segmenting the network based on the logical colour of edges and nodes. The first source node and edge is identfied and the network segment is traversed collating intermediate nodes, until the segment end-node is identified</p>
+<ol>
+<li>All start-edges are identified for a given colour of segment, where the intial and updated edge colour are the same</li>
+<li>For every start-segment, identify the corresponding current start-node, start-edge and target-edge</li>
+<li>If this target-edge is not a loop and not the start-edge <ul>
+<li>Collate the source node</li>
+<li>Make the current target-edge the source-edge</li>
+<li>Repeat stage 4 until the target-edge is a start-edge</li>
+</ul>
+</li>
+<li>Gather the start- and end- nodes for the segment colour</li>
+<li>Iterate through all start-edges segments</li>
+</ol>
+<p>The reassembled simplified network consisting of aggregated start- and end- node is then output</p>
+<h2>Examples</h2>
+<p>To illustrate the input and simplified networks a based set of example graphs are considered:</p>
+<h3>Simple networks</h3>
+<p>These are examples of trivial base network simplification</p>
+<h4>Two node networks</h4>
+<p>Examples of a simple directed network</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W001</strong></td>
+<td style="text-align:center"><img src="images/W001RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W001RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W002</strong></td>
+<td style="text-align:center"><img src="images/W002FA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W002RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h4>Simple three node networks</h4>
+<p>Examples of three nodes with permutations of directed source and target nodes simpliplications</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W003</strong></td>
+<td style="text-align:center"><img src="images/W003RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W003RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W004</strong></td>
+<td style="text-align:center"><img src="images/W004RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W004RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W005</strong></td>
+<td style="text-align:center"><img src="images/W005RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W005RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W006</strong></td>
+<td style="text-align:center"><img src="images/W006RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W006RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h4>Three node loops</h4>
+<p>Examples of three nodes forming loops with permutations of directed source and target nodes</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W007</strong></td>
+<td style="text-align:center"><img src="images/W007RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W007RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W008</strong></td>
+<td style="text-align:center"><img src="images/W008RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W008RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W009</strong></td>
+<td style="text-align:center"><img src="images/W009RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W009RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h3>More complex networks</h3>
+<p>These are example simplifications of more complex base networks that typically caused problems when developing this simplification approach</p>
+<h4>A node with three edges</h4>
+<p>An example of a four-node network with a node with three edges</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W010</strong></td>
+<td style="text-align:center"><img src="images/W010RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W010RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h4>Five node networks</h4>
+<p>An example of a simple connected five-node network and a with a multiply connected node</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W011</strong></td>
+<td style="text-align:center"><img src="images/W011RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W011RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W012</strong></td>
+<td style="text-align:center"><img src="images/W012RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W012RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h3>Problematic three-node loops networks</h3>
+<p>An example of a four-node network with a three-node loop. The introduction of a connected node breaks the symmetry of the three-node loop and the asymmetry makes it unclear how these cases should be resolved as the three node loop forms the start or the end of a simply connected network</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W013</strong></td>
+<td style="text-align:center"><img src="images/W013RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W013RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W014</strong></td>
+<td style="text-align:center"><img src="images/W014RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W014RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h3>Five node networks with loops</h3>
+<p>Examples of five node networks with an embedded three node loop. In these cases the three node loop is flattend</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W015</strong></td>
+<td style="text-align:center"><img src="images/W015RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W015RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W016</strong></td>
+<td style="text-align:center"><img src="images/W016RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W016RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h3>Six node networks with loops</h3>
+<p>Examples of five node networks with an embedded three and four node loop. Where possible the three and four node loops are flatten.</p>
+<table>
+<thead><tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:center">Simply-connected network</th>
+<th style="text-align:center">Simplified network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>W017</strong></td>
+<td style="text-align:center"><img src="images/W017RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W017RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W018</strong></td>
+<td style="text-align:center"><img src="images/W018RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W018RB.svg" alt="simple-network"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>W019</strong></td>
+<td style="text-align:center"><img src="images/W019RA.svg" alt="simple-network"></td>
+<td style="text-align:center"><img src="images/W019RB.svg" alt="simple-network"></td>
+</tr>
+</tbody>
+</table>
+<h2>Summary</h2>
+<p>This algorithmic method is an approach to simplify a network for the disaggregation and reassembly of a simplified network in which resolving data issues such missing or duplicated elements, and of loops.</p>
+<p>This consists of implementation the method along with test-data and visualisation tool developed in <code>python3</code> using the <code>pandas</code>, <code>matplotlib</code> and an modified version of <code>networkx</code> python packages is described in the <code>goldfinch/graph</code> project <a href="https://github.com/anisotropi4/goldfinch">here</a> on github</p>
+
+</article>
+</html>

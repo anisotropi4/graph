@@ -1,0 +1,4 @@
+{"source":"A","target":"C","segment":"C00000","nodes":["A","B","C"],"wayids":["Example"],"length":2.0}
+{"source":"C","target":"A","segment":"C00070","nodes":["C","B","A"],"wayids":["Example"],"length":2.0}
+{"source":"B","target":"C","segment":"C00074","nodes":["B","A","C"],"wayids":["Loop"],"length":2.0}
+{"source":"C","target":"B","segment":"C00074","nodes":["C","A","B"],"wayids":["Loop"],"length":2.0}

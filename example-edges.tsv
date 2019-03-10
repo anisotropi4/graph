@@ -1,0 +1,17 @@
+wayid	edgeid	source	target	length
+Example	1	A	B	1
+Example	2	B	C	1
+Aggregate	3	A	B	1
+Aggregate	4	B	C	1
+Aggregate	5	C	B	1
+Aggregate	6	B	A	1
+SimpleLoop	7	A	B	1
+SimpleLoop	8	B	C	1
+SimpleLoop	9	C	A	1
+Loop	7	A	B	1
+Loop	8	B	C	1
+Loop	9	C	A	1
+Loop	10	B	A	1
+Loop	11	C	B	1
+Loop	12	A	C	1
+LoopOut	13	B	C	1
