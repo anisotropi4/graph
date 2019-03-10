@@ -195,4 +195,4 @@ Examples of five node networks with an embedded three and four node loop. Where 
 
 This algorithmic method is an approach to simplify a network for the disaggregation and reassembly of a simplified network in which resolving data issues such missing or duplicated elements, and of loops. 
 
-This consists of implementation the method along with test-data and visualisation tool developed in ```python3``` using the ```pandas```, ```matplotlib``` and an modified version of ```networkx``` python packages is described in the ```goldfinch/graph``` project [here](https://github.com/anisotropi4/goldfinch) on github
+This consists of implementation the method along with test-data and visualisation tool developed using the [pandas](http://pandas.pydata.org/), [numpy](https://www.numpy.org/) and [networkx](https://networkx.github.io) python3 packages

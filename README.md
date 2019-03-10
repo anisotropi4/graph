@@ -6,14 +6,14 @@ Geographic representations of networks, such as transport networks, typically co
 
 This approach looks to disaggregate, or break up, of OSM transport-network data into its consitutent edges and reassembly of a simplified network through the removal of duplicate or parallel edges, and combining simply-connected nodes. For example, based on analysis of a OSM British rail-network data shows 497 359 nodes with 506 337 edges 1 012 604 segments 925 172 (91.4%) are simply-connected.
 
-More details about the implementation is given [here](graph.html)
+More details about the implementation is given [here](graph.md)
 
 ## Pre-requisites
 
 To extract and process the data is dependant on the following tools:
 
   - [python3](https://python.org) 
-  - [pandas](http://pandas.pydata.org/), [numpy](https://www.numpy.org/) and [networkx](https://networkx.github.io) python3 packages 
+  - [pandas](http://pandas.pydata.org/), [numpy](https://www.numpy.org/) and [networkx](https://networkx.github.io) python3 packages
   
 #### For ease of python dependency management a local python3 [miniconda](https://conda.io/miniconda.html) or [anaconda](https://www.anaconda.com/distribution/) installation is recomended
 
