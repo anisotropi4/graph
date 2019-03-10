@@ -2,7 +2,7 @@
 
 ./junction.py --tsv testedges.tsv testsegments-file.ndjson
 
-if [ ! -f images ]; then
+if [ ! -d images ]; then
   mkdir images
 fi
 
