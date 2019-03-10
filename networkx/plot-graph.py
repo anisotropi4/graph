@@ -14,7 +14,7 @@ jsonfile = None
 #tsvfile = None
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Input an edge file and output the corresponding .svg format simplified network to the input directory')
+    parser = argparse.ArgumentParser(description='Input a tsv or json edge-file and output an .svg format visualisatoin of hte network to the images subdirectory')
 
     parser.add_argument('--tsv', dest='tsvfile', type=str, help='name of tsv-file to visualise')
     parser.add_argument('--json', dest='jsonfile', type=str, help='name of json-file to visualise')
