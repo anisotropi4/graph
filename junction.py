@@ -200,7 +200,7 @@ def main():
         for this_id in links.query("active").index:
             if count % 1024 == 0:
                 log(
-                    "Active\t\t{len(links.query('active').index):> 8} segments",
+                    f"Active\t\t{len(links.query('active').index):> 8} segments",
                     args.quiet,
                 )
             links.at[this_id, "active"] = False
