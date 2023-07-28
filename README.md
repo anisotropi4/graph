@@ -16,7 +16,11 @@ To extract and process the data is dependant on the following tools:
   - [pandas](http://pandas.pydata.org/) and [numpy](https://www.numpy.org/) python3 packages for simplification
   - [matplotlib](https://matplotlib.org/) and [networkx](https://networkx.github.io) python3 packages for visualisation
   
-#### For ease of python dependency management a local python3 [miniconda](https://conda.io/miniconda.html) or [anaconda](https://www.anaconda.com/distribution/) installation is recomended
+#### For ease of python dependency management a local python3 [venv](https://docs.python.org/3/library/venv.html) in the `venv` sub-directory is created and the simplication examples in the subsequent sections are run:
+
+```
+    $ ./run.sh
+```
 
 ## Running simplification against example data
 
@@ -35,16 +39,16 @@ To extract and process the data is dependant on the following tools:
    Running the `plot-graph.py` script as follows creates `.svg` visualisations of the test and simplified networks in the images directory `graph.html` 
 
 ```
-   $ ./networkx/plot-graph.py --tsv testedges.tsv
-   $ ./networkx/plot-graph.py --json testsegments-file.ndjson
+   $ ./plot-graph.py --tsv testedges.tsv
+   $ ./plot-graph.py --json testsegments-file.ndjson
 ```
 
 ### Miscellaneous example visualisation
 
    Additional graphs used in the `graphs.html` are then generated as:
 ```
-    $ ./networkx/plot-graph.py --tsv example-edges.tsv
-    $ ./networkx/plot-graph.py --json example-segments.ndjson
+    $ ./plot-graph.py --tsv example-edges.tsv
+    $ ./plot-graph.py --json example-segments.ndjson
 ```
 ## Documentation
 
