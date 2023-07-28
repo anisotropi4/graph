@@ -1,14 +1,14 @@
 #!/bin/sh
 
-./junction.py --tsv testedges.tsv testsegments-file.ndjson
+./junction.py --tsv testedges.tsv testsegments-file.jsonl
 
 if [ ! -d images ]; then
-  mkdir images
+    mkdir images
 fi
 
-./networkx/plot-graph.py --tsv testedges.tsv
-./networkx/plot-graph.py --json testsegments-file.ndjson
+./plot-graph.py --tsv testedges.tsv
+./plot-graph.py --json testsegments-file.jsonl
 
-./networkx/plot-graph.py --tsv example-edges.tsv
-./networkx/plot-graph.py --json example-segments.ndjson
+./plot-graph.py --tsv example-edges.tsv
+./plot-graph.py --json example-segments.jsonl
 
