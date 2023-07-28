@@ -11,7 +11,7 @@ import numpy as np
 import datetime
 import argparse
 
-parser = argparse.ArgumentParser(description='Input an edge file and output the corresponding .ndjson format simplified network. By default outputs to stdout and timing information to stderr')
+parser = argparse.ArgumentParser(description='Input an edge file and output the corresponding .jsonl format simplified network. By default outputs to stdout and timing information to stderr')
 
 parser.add_argument('--tsv', dest='tsv', action='store_true',
                     default=False, help='process tsv format file')
@@ -76,7 +76,7 @@ duplicate_segments = duplicate_segments[['edge', 'source', 'length', 'target', '
 
 time_offset('Dumping duplicate segments', False)
 if len(duplicate_segments) > 0:
-    pd.DataFrame(duplicate_segments).to_json(this_filename + '-duplicates.ndjson', orient='records', lines=True)
+    pd.DataFrame(duplicate_segments).to_json(this_filename + '-duplicates.jsonl', orient='records', lines=True)
 
 time_offset('Dumped duplicate{:> 8} segments'.format(len(duplicate_segments.index)))
 
@@ -148,7 +148,7 @@ time_offset('Processed\t{:> 8} loops\t'.format(len(links.query('loop').index)))
 
 if args.dump:
     time_offset('Dumping segments', False)
-    pd.DataFrame(segments).T.to_json(this_filename + '-dump.ndjson')
+    pd.DataFrame(segments).T.to_json(this_filename + '-dump.jsonl')
     time_offset('Dumped\t\t{:> 8} segments'.format(len(segments.index)))
 
 time_offset('Outputing segments', False)
